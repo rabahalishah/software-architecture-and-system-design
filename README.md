@@ -1,4 +1,4 @@
-# software-architecture-and-system-design
+# Software Architecture and System Design Guide
 
 <!--
   browser: architecture-decision-record
