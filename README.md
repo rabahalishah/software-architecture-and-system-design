@@ -335,3 +335,142 @@ See also:
 
 
 **Credit:** [joelparkerhenderson](https://github.com/joelparkerhenderson/architecture-decision-record)
+
+
+# Everything You NEED to Know About Client Architecture Patterns
+
+### 1. **MVC (Model-View-Controller)**
+
+**Concept:**  
+MVC separates the app into three components:
+- **Model:** Manages the data (e.g., a list of users from the server).
+- **View:** Handles what the user sees (e.g., UI elements like buttons and labels).
+- **Controller:** Acts as the middleman between Model and View (e.g., updates the view when the model changes).
+
+**Example:**  
+- You have a shopping app.
+  - The **Model** stores the list of products.
+  - The **View** displays the products on the screen.
+  - The **Controller** handles actions like "add to cart" or "refresh list."
+
+**Problem Solved:**  
+- Clear separation of responsibilities.
+- However, the **Controller** can become messy if too much logic is added (this is called the "Massive View Controller" problem).
+
+---
+
+### 2. **MVP (Model-View-Presenter)**
+
+**Concept:**  
+MVP refines MVC by introducing a **Presenter**, which contains all the logic and updates the view.
+- **Model:** Same as MVC (data).
+- **View:** Displays the UI but is passive; it doesn't have logic.
+- **Presenter:** Handles all the user actions and updates the view.
+
+**Example:**  
+- You click "search" in a movie app.
+  - The **View** sends the click to the **Presenter**.
+  - The **Presenter** fetches data from the **Model** (e.g., movie results) and tells the **View** to display it.
+
+**Problem Solved:**  
+- Reduces the burden on the **View**.
+- Presenter is easier to test since it doesn’t depend on UI.
+
+---
+
+### 3. **MVVM (Model-View-ViewModel)**
+
+**Concept:**  
+MVVM adds a **ViewModel** that binds the **Model** to the **View**. Changes in the **Model** automatically reflect in the **View**, often using **data-binding** (e.g., React’s state management is similar).
+
+- **Model:** Same as MVC (data).
+- **View:** Same as MVC (UI).
+- **ViewModel:** Acts as a bridge. It prepares data from the **Model** in a format the **View** can use directly.
+
+**Example:**  
+- A weather app.
+  - The **Model** fetches the temperature from the API.
+  - The **ViewModel** converts the temperature into a user-friendly string like "25°C, Sunny."
+  - The **View** displays it automatically because of data-binding.
+
+**Problem Solved:**  
+- Eliminates manual updates to the **View** (more automation).
+- Ideal for frameworks like Angular, React, and SwiftUI.
+
+---
+
+### 4. **MVVM-C (Model-View-ViewModel-Coordinator)**
+
+**Concept:**  
+This extends MVVM by introducing a **Coordinator**, which handles navigation (e.g., moving from one screen to another).
+
+- **Model, View, ViewModel:** Same as MVVM.
+- **Coordinator:** Manages screen transitions and ensures the **ViewModel** focuses only on business logic.
+
+**Example:**  
+- A login screen in a banking app.
+  - The **ViewModel** handles validation (e.g., is the password correct?).
+  - The **Coordinator** decides to navigate to the dashboard if login is successful.
+
+**Problem Solved:**  
+- Makes navigation logic reusable and removes it from the **ViewModel**.
+
+---
+
+### 5. **VIPER (View, Interactor, Presenter, Entity, Router)**
+
+**Concept:**  
+VIPER is like MVP on steroids, with even more separation:
+- **View:** Displays UI and captures user input.
+- **Interactor:** Handles business logic (e.g., fetch data, validate input).
+- **Presenter:** Prepares data for the **View** and forwards user actions to the **Interactor**.
+- **Entity:** Represents raw data structures or models (e.g., API response).
+- **Router:** Handles navigation between screens.
+
+**Example:**  
+- A food delivery app.
+  - **View:** Shows restaurant list.
+  - **Interactor:** Fetches restaurant data and filters it based on user preferences.
+  - **Presenter:** Formats the data (e.g., "Open Now") for the **View**.
+  - **Entity:** Holds the raw data (e.g., restaurant name, rating).
+  - **Router:** Moves to the restaurant details screen when clicked.
+
+**Problem Solved:**  
+- Highly modular, making each component easier to test and maintain.
+- Complex to implement but great for large apps.
+
+---
+
+### When to Use Each Pattern?
+
+- **MVC:** Great for small apps or when starting out.
+- **MVP:** Use when you want testable code but don’t need advanced features like data-binding.
+- **MVVM:** Ideal for apps with frameworks that support data-binding (e.g., React, SwiftUI, Angular).
+- **MVVM-C:** Choose for apps with complex navigation requirements.
+- **VIPER:** Best for large-scale, enterprise-level apps where modularity is critical.
+
+
+## Summary:
+after observing all these patterns I have noticed that we are just extending one pattern on the other level. Such as in MVC our views was also handling some interaction logic but in MVP we separated it from View and added it to the controller.
+
+In MVVM we again kept the view same as MVC and then made some automation using ViewModel to update the view in case of any change in model without refreshing or updating the page.
+
+in MVVM-C we took one level further and separated our navigation from logic from ViewModel to coordinator.
+
+in VIPER we kept each job separate.
+
+this seems ultimately refactoring of code and nothing more under the nutshell.
+
+# Why Django REST + React Feels Like MVP
+In your setup:
+## The Presenter role is somewhat implicit:
+- React’s hooks (useEffect, useState) fetch data (akin to Presenter).
+- The transformation of data for display (e.g., formatting API responses) is also done in the React component (Presenter logic).
+- The View is React’s rendering layer.
+
+# Why Django REST + React Also Feels Like MVVM
+When React components use state management libraries (e.g., Redux or MobX):
+- The Model is the global state/store.
+- The ViewModel becomes the state logic (selectors, reducers, or hooks), preparing data for React components.
+- React’s components (View) bind directly to the store, similar to data binding in MVVM.
+
